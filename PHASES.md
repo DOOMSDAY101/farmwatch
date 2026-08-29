@@ -89,3 +89,5 @@ I'd actually suggest we **pause the AWS credential troubleshooting for a moment*
 That way, when your Bedrock access is ready, we're not staring at an empty project—we'll already have the farm data and the anomaly scenario ready to plug into the agent.
 
 **Your next concrete task should be creating the farm simulator.** We can make it generate realistic hourly readings and a controlled water-consumption anomaly for our first demo.
+
+dev
