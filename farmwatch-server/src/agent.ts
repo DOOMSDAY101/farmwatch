@@ -1,10 +1,21 @@
 import { Agent } from "@strands-agents/sdk";
+import { VercelModel } from "@strands-agents/sdk/models/vercel";
+import { ollama } from "ai-sdk-ollama";
 
-const agent = new Agent();
+const model = new VercelModel({
+    provider: ollama("llama3.2:3b"),
+});
 
-const result = agent.invoke(
-    "You are FarmWatch, an AI assistant for poultry farmers. " +
-    "Briefly explain what you can help a poultry farmer monitor."
-);
+const agent = new Agent({
+    model,
+});
 
-console.log(result);
+async function main() {
+    const result = await agent.invoke(
+        "You are FarmWatch, an autonomous poultry farm monitoring agent. Explain your role in one sentence."
+    );
+
+    console.log(result);
+}
+
+void main();
