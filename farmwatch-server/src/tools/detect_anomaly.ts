@@ -1,7 +1,7 @@
 import {
     FarmReading,
     Anomaly,
-} from "./types/types";
+} from "../types/types";
 
 export interface FarmBaseline {
     waterLiters: number;

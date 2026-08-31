@@ -5,7 +5,7 @@ import {
 import {
     detectAnomalies,
     FarmBaseline,
-} from "./anomaly.js";
+} from "./tools/detect_anomaly";
 
 const readings: FarmReading[] = [];
 
