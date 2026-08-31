@@ -1,5 +1,7 @@
 Exactly. For a **small hackathon**, I would cut your architecture down significantly. You don't need sensors, DynamoDB, API Gateway, WhatsApp, a dashboard, AgentCore, weather APIs, and three anomaly types all at once.
 
+FarmWatch uses an agent to decide how to investigate the abnormality, gather the relevant context from multiple sources, determine the most likely cause, assess whether intervention is necessary, and propose an action for the farmer to approve.
+
 Your MVP should prove **one complete agentic workflow** really well.
 
 ## FarmWatch MVP
@@ -123,6 +125,21 @@ FarmWatch Agent
 ├── get_current_farm_data()
 ├── get_historical_data()
 ├── get_weather()
+└── create_inspection_task()
+FarmWatch
+│
+├── get_latest_farm_readings()
+│
+├── check_for_anomalies()
+│
+├── get_historical_pattern()
+│
+├── get_weather_conditions()
+│
+├── get_related_metrics()
+│
+├── check_recent_farm_events()
+│
 └── create_inspection_task()
 ```
 
