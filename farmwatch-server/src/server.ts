@@ -4,7 +4,7 @@ import "dotenv/config";
 import {
     processReading,
     getReadings,
-} from "./monitor.js";
+} from "./monitor";
 
 import { FarmReading } from "./types/types";
 
