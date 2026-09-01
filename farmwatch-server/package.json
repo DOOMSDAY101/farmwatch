@@ -27,6 +27,7 @@
     "typescript": "^7.0.2"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^4.0.55",
     "@strands-agents/sdk": "^1.15.0",
     "@types/express": "^5.0.6",
     "ai": "^6.0.271",
