@@ -3,18 +3,11 @@ import {
 } from "./types/types";
 
 import {
+    baseline,
     detectAnomalies,
-    FarmBaseline,
 } from "./tools/detect_anomaly";
 
 const readings: FarmReading[] = [];
-
-const baseline: FarmBaseline = {
-    waterLiters: 80,
-    feedKg: 42,
-    eggCount: 410,
-    temperatureC: 28,
-};
 
 export function processReading(
     reading: FarmReading
@@ -58,5 +51,11 @@ export function processReading(
 }
 
 export function getReadings(): FarmReading[] {
-    return readings;
+    return [...readings];
+}
+
+export function getLatestReading(): FarmReading | null {
+    return readings.length > 0
+        ? readings[readings.length - 1]
+        : null;
 }
