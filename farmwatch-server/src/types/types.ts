@@ -25,3 +25,22 @@ export interface Anomaly {
 
     message: string;
 }
+
+export interface InvestigationResult {
+    finding: string;
+    evidence: string[];
+    historicalComparison: string;
+    likelyExplanation: string;
+    severity: "medium" | "high";
+    humanAttentionRecommended: boolean;
+}
+export interface InvestigationDocument {
+    anomalyId: string;
+    farmId: string;
+    houseId: string;
+    detectedAt: string;
+    reading: FarmReading;
+    anomalies: Anomaly[];
+    investigation: InvestigationResult;
+    createdAt: string;
+}

@@ -7,6 +7,8 @@ import {
 } from "./monitor";
 
 import { FarmReading } from "./types/types";
+import { enqueueInvestigation } from "./queue/investigationQueue";
+import { getInvestigations } from "./repository/investigationRepository";
 
 const app = express();
 
@@ -25,7 +27,7 @@ app.get("/health", (_req, res) => {
 
 app.post(
     "/webhook/farm-data",
-    (req, res) => {
+    async (req, res) => {
         const reading =
             req.body as FarmReading;
 
@@ -43,9 +45,48 @@ app.post(
         const result =
             processReading(reading);
 
-        res.status(200).json({
+        let investigationId:
+            string | null = null;
+
+        // agentic investigation
+        if (
+            result.status === "anomaly"
+        ) {
+            investigationId =
+                enqueueInvestigation(
+                    reading,
+                    result.anomalies
+                );
+        }
+
+        console.log({
+            "Result": result,
+            "Investigation": investigationId
+        })
+        return res.status(200).json({
             received: true,
+
             ...result,
+
+            investigationId,
+        });
+
+        // res.status(200).json({
+        //     received: true,
+        //     ...result,
+        // });
+    }
+);
+
+app.get(
+    "/api/investigations",
+    async (_req, res) => {
+
+        const investigations =
+            await getInvestigations(50);
+
+        res.json({
+            investigations,
         });
     }
 );
