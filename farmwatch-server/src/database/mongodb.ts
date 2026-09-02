@@ -1,6 +1,7 @@
 import { MongoClient, Db } from "mongodb";
 require("dotenv").config();
 
+//initialize mongodb connection
 const uri = process.env.MONGODB_URI;
 
 if (!uri) {
