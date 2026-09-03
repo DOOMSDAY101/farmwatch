@@ -4,7 +4,8 @@ export type FarmEvent =
     | "normal"
     | "water_system_issue"
     | "feed_system_issue"
-    | "production_drop";
+    | "production_drop"
+    | "heat_stress";
 
 export class FarmSimulator {
     private readonly farmId: string;
