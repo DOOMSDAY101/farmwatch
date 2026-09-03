@@ -1,0 +1,1031 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FarmWatch — Dashboard</title>
+    <style>
+      :root {
+        --bg: #f0f4f1;
+        --card: #ffffff;
+        --text: #1f2937;
+        --text-light: #6b7280;
+        --primary: #059669;
+        --primary-light: #d1fae5;
+        --danger: #dc2626;
+        --danger-light: #fee2e2;
+        --warning: #d97706;
+        --warning-light: #fef3c7;
+        --info: #2563eb;
+        --info-light: #dbeafe;
+        --border: #e5e7eb;
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.05);
+        --radius: 14px;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family:
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.5;
+      }
+      header {
+        background: var(--card);
+        border-bottom: 1px solid var(--border);
+        padding: 1rem 2rem;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: var(--shadow);
+      }
+      .header-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-weight: 700;
+        font-size: 1.25rem;
+        color: var(--primary);
+      }
+      .brand svg {
+        width: 28px;
+        height: 28px;
+      }
+      .live-badge {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        color: var(--text-light);
+        font-weight: 500;
+      }
+      .pulse {
+        width: 8px;
+        height: 8px;
+        background: var(--primary);
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.5;
+          transform: scale(1.2);
+        }
+      }
+      nav {
+        display: flex;
+        gap: 0.25rem;
+      }
+      nav a {
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        text-decoration: none;
+        color: var(--text-light);
+        font-weight: 500;
+        font-size: 0.875rem;
+        transition: all 0.2s;
+      }
+      nav a:hover {
+        background: var(--bg);
+        color: var(--text);
+      }
+      nav a.active {
+        background: var(--primary-light);
+        color: var(--primary);
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+      .alert-banner {
+        background: linear-gradient(135deg, var(--danger) 0%, #b91c1c 100%);
+        color: white;
+        padding: 1.25rem 1.5rem;
+        border-radius: var(--radius);
+        margin-bottom: 1.5rem;
+        display: none;
+        align-items: flex-start;
+        gap: 1rem;
+        box-shadow: var(--shadow);
+        animation: slideDown 0.4s ease;
+      }
+      .alert-banner.show {
+        display: flex;
+      }
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .alert-banner h2 {
+        font-size: 1.125rem;
+        margin-bottom: 0.25rem;
+      }
+      .alert-banner p {
+        opacity: 0.95;
+        font-size: 0.9375rem;
+      }
+      .alert-icon {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+      }
+      .section-title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-light);
+        margin-bottom: 1rem;
+      }
+      .grid-4 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+      .metric-card {
+        background: var(--card);
+        border-radius: var(--radius);
+        padding: 1.25rem;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+        transition: transform 0.2s;
+      }
+      .metric-card:hover {
+        transform: translateY(-2px);
+      }
+      .metric-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+      }
+      .metric-label {
+        font-size: 0.875rem;
+        color: var(--text-light);
+        font-weight: 500;
+      }
+      .metric-status {
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 0.25rem 0.5rem;
+        border-radius: 999px;
+        text-transform: uppercase;
+      }
+      .status-normal {
+        background: var(--primary-light);
+        color: var(--primary);
+      }
+      .status-warning {
+        background: var(--warning-light);
+        color: var(--warning);
+      }
+      .status-danger {
+        background: var(--danger-light);
+        color: var(--danger);
+      }
+      .metric-value {
+        font-size: 1.875rem;
+        font-weight: 700;
+        color: var(--text);
+        font-variant-numeric: tabular-nums;
+      }
+      .metric-sub {
+        font-size: 0.8125rem;
+        color: var(--text-light);
+        margin-top: 0.25rem;
+      }
+      .metric-bar {
+        height: 6px;
+        background: var(--bg);
+        border-radius: 999px;
+        margin-top: 0.75rem;
+        overflow: hidden;
+      }
+      .metric-bar-fill {
+        height: 100%;
+        border-radius: 999px;
+        transition: width 0.6s ease;
+      }
+      .fill-green {
+        background: var(--primary);
+      }
+      .fill-amber {
+        background: var(--warning);
+      }
+      .fill-red {
+        background: var(--danger);
+      }
+
+      .two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+      }
+      @media (max-width: 900px) {
+        .two-col {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .card {
+        background: var(--card);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+        overflow: hidden;
+      }
+      .card-header {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .card-title {
+        font-weight: 600;
+        font-size: 1rem;
+      }
+      .card-body {
+        padding: 1.25rem 1.5rem;
+      }
+
+      .investigation-item {
+        padding: 1.25rem;
+        border-radius: 12px;
+        background: var(--bg);
+        margin-bottom: 1rem;
+        border-left: 4px solid var(--primary);
+        animation: fadeIn 0.5s ease;
+      }
+      .investigation-item.severe {
+        border-left-color: var(--danger);
+        background: var(--danger-light);
+      }
+      .investigation-item.warning {
+        border-left-color: var(--warning);
+        background: var(--warning-light);
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(5px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .inv-finding {
+        font-weight: 600;
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .inv-meta {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.8125rem;
+        color: var(--text-light);
+        margin-bottom: 0.75rem;
+        flex-wrap: wrap;
+      }
+      .inv-meta span {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.25rem 0.625rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+      .tag-severity-high {
+        background: var(--danger-light);
+        color: var(--danger);
+      }
+      .tag-severity-medium {
+        background: var(--warning-light);
+        color: var(--warning);
+      }
+      .tag-severity-low {
+        background: var(--info-light);
+        color: var(--info);
+      }
+      .tag-bool {
+        background: var(--primary-light);
+        color: var(--primary);
+      }
+
+      .evidence-list {
+        list-style: none;
+        margin: 0.75rem 0;
+      }
+      .evidence-list li {
+        padding: 0.35rem 0;
+        font-size: 0.9375rem;
+        color: var(--text);
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+      .evidence-list li::before {
+        content: "•";
+        color: var(--primary);
+        font-weight: bold;
+      }
+      .investigation-item.severe .evidence-list li::before {
+        color: var(--danger);
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--text-light);
+      }
+      .empty-state svg {
+        width: 48px;
+        height: 48px;
+        margin-bottom: 1rem;
+        opacity: 0.4;
+      }
+
+      .reading-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.875rem 0;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.9375rem;
+      }
+      .reading-row:last-child {
+        border-bottom: none;
+      }
+      .reading-time {
+        color: var(--text-light);
+        font-size: 0.8125rem;
+      }
+      .reading-badges {
+        display: flex;
+        gap: 0.5rem;
+      }
+      .mini-badge {
+        font-size: 0.75rem;
+        padding: 0.15rem 0.5rem;
+        border-radius: 6px;
+        font-weight: 600;
+      }
+
+      .refresh-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+      .last-updated {
+        font-size: 0.8125rem;
+        color: var(--text-light);
+      }
+      .btn {
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--card);
+        color: var(--text);
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .btn:hover {
+        background: var(--bg);
+      }
+      .btn-primary {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+      }
+      .btn-primary:hover {
+        background: #047857;
+      }
+
+      .server-input {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.8125rem;
+        color: var(--text-light);
+      }
+      .server-input input {
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 0.35rem 0.5rem;
+        font-size: 0.8125rem;
+        width: 180px;
+        font-family: monospace;
+      }
+
+      .action-panel {
+        background: var(--card);
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+        margin-top: 1.5rem;
+        display: none;
+      }
+      .action-panel.show {
+        display: block;
+        animation: slideDown 0.3s ease;
+      }
+      .action-panel h3 {
+        margin-bottom: 0.75rem;
+        font-size: 1rem;
+      }
+      .action-buttons {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+      }
+      .btn-approve {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 0.625rem 1.25rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .btn-approve:hover {
+        background: #047857;
+      }
+      .btn-dismiss {
+        background: transparent;
+        color: var(--text-light);
+        border: 1px solid var(--border);
+        padding: 0.625rem 1.25rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .btn-dismiss:hover {
+        background: var(--bg);
+      }
+
+      #investigationsList {
+        height: 420px;
+        overflow-y: auto;
+        box-sizing: border-box;
+        scrollbar-width: thin;
+      }
+
+      #investigationsList::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      #investigationsList::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+      }
+
+      #readingsList {
+        height: 420px;
+        overflow-y: auto;
+        box-sizing: border-box;
+        scrollbar-width: thin;
+      }
+
+      #readingsList::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      #readingsList::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+      }
+    </style>
+    <base target="_blank" />
+  </head>
+  <body>
+    <header>
+      <div class="header-inner">
+        <div class="brand">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            <path d="M9 12l2 2 4-4" />
+          </svg>
+          FarmWatch
+        </div>
+        <nav>
+          <a href="farmwatch-dashboard.html" class="active">Dashboard</a>
+          <a href="farmwatch-simulator.html">Simulator</a>
+        </nav>
+        <div style="display: flex; align-items: center; gap: 1rem">
+          <div class="server-input">
+            Server:
+            <input
+              type="text"
+              id="serverUrl"
+              value="http://localhost:3000"
+              onchange="updateServer()"
+            />
+          </div>
+          <div class="live-badge">
+            <div class="pulse"></div>
+            Live
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="container">
+      <!-- Active Alert Banner -->
+      <div id="alertBanner" class="alert-banner">
+        <div class="alert-icon">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="white"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+            />
+            <line x1="12" y1="9" x2="12" y2="13" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
+        </div>
+        <div>
+          <h2 id="alertTitle">Anomaly Detected</h2>
+          <p id="alertDesc">Investigation in progress...</p>
+        </div>
+      </div>
+
+      <!-- Summary Metrics -->
+      <div class="section-title">Current Reading — House 01</div>
+      <div class="grid-4" id="metricsGrid">
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-label">Temperature</span>
+            <span class="metric-status status-normal" id="tempStatus"
+              >Normal</span
+            >
+          </div>
+          <div class="metric-value" id="tempValue">--°C</div>
+          <div class="metric-sub">Baseline: 28°C</div>
+          <div class="metric-bar">
+            <div
+              class="metric-bar-fill fill-green"
+              id="tempBar"
+              style="width: 0%"
+            ></div>
+          </div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-label">Water</span>
+            <span class="metric-status status-normal" id="waterStatus"
+              >Normal</span
+            >
+          </div>
+          <div class="metric-value" id="waterValue">-- L</div>
+          <div class="metric-sub">Baseline: 81 L</div>
+          <div class="metric-bar">
+            <div
+              class="metric-bar-fill fill-green"
+              id="waterBar"
+              style="width: 0%"
+            ></div>
+          </div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-label">Feed</span>
+            <span class="metric-status status-normal" id="feedStatus"
+              >Normal</span
+            >
+          </div>
+          <div class="metric-value" id="feedValue">-- kg</div>
+          <div class="metric-sub">Baseline: 42 kg</div>
+          <div class="metric-bar">
+            <div
+              class="metric-bar-fill fill-green"
+              id="feedBar"
+              style="width: 0%"
+            ></div>
+          </div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-label">Eggs</span>
+            <span class="metric-status status-normal" id="eggStatus"
+              >Normal</span
+            >
+          </div>
+          <div class="metric-value" id="eggValue">--</div>
+          <div class="metric-sub">Baseline: 410</div>
+          <div class="metric-bar">
+            <div
+              class="metric-bar-fill fill-green"
+              id="eggBar"
+              style="width: 0%"
+            ></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="refresh-bar">
+        <div class="last-updated" id="lastUpdated">Last updated: never</div>
+        <button class="btn" onclick="loadData()">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+          </svg>
+          Refresh
+        </button>
+      </div>
+
+      <div class="two-col">
+        <!-- Investigations -->
+        <div>
+          <div class="section-title">Investigations</div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Agent Findings</span>
+              <span class="tag tag-bool" id="invCount">0 total</span>
+            </div>
+            <div class="card-body" id="investigationsList">
+              <div class="empty-state">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="16" x2="12" y2="12" />
+                  <line x1="12" y1="8" x2="12.01" y2="8" />
+                </svg>
+                <p>
+                  No investigations yet.<br />Send farm data from the Simulator.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Readings -->
+        <div>
+          <div class="section-title">Recent Readings</div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Incoming Data</span>
+              <span class="tag tag-bool" id="readingCount">0</span>
+            </div>
+            <div class="card-body" id="readingsList">
+              <div class="empty-state">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                </svg>
+                <p>No readings received yet.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Human Approval Panel (shown when anomaly needs action) -->
+      <div id="approvalPanel" class="action-panel">
+        <h3>⚠️ Human Approval Needed</h3>
+        <p
+          style="
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            font-size: 0.9375rem;
+          "
+          id="approvalText"
+        >
+          The agent has recommended an inspection. Approve to create a task.
+        </p>
+        <div class="action-buttons">
+          <button class="btn-approve" onclick="approveAction()">
+            Approve & Create Task
+          </button>
+          <button class="btn-dismiss" onclick="dismissAction()">Dismiss</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let SERVER = localStorage.getItem("fw_server") || "http://localhost:3000";
+      document.getElementById("serverUrl").value = SERVER;
+      let latestInvestigation = null;
+
+      function updateServer() {
+        SERVER = document.getElementById("serverUrl").value.replace(/\/$/, "");
+        localStorage.setItem("fw_server", SERVER);
+        loadData();
+      }
+
+      function formatTime(iso) {
+        if (!iso) return "--";
+        const d = new Date(iso);
+        return d.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        });
+      }
+      function formatDate(iso) {
+        if (!iso) return "--";
+        const d = new Date(iso);
+        return (
+          d.toLocaleDateString() +
+          " " +
+          d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+        );
+      }
+
+      function severityClass(sev) {
+        if (sev === "high") return "severe";
+        if (sev === "medium") return "warning";
+        return "";
+      }
+      function severityTag(sev) {
+        if (sev === "high") return "tag-severity-high";
+        if (sev === "medium") return "tag-severity-medium";
+        return "tag-severity-low";
+      }
+
+      async function loadData() {
+        document.getElementById("lastUpdated").textContent =
+          "Last updated: loading...";
+        try {
+          const [invRes, readRes] = await Promise.all([
+            fetch(`${SERVER}/api/investigations`).catch(() => null),
+            fetch(`${SERVER}/readings`).catch(() => null),
+          ]);
+
+          let investigations = [];
+          let readings = [];
+
+          if (invRes && invRes.ok) {
+            const data = await invRes.json();
+            investigations = data.investigations || [];
+          }
+          if (readRes && readRes.ok) {
+            const data = await readRes.json();
+            readings = Array.isArray(data) ? data : data.readings || [];
+          }
+
+          renderInvestigations(investigations);
+          renderReadings(readings);
+          updateMetrics(investigations, readings);
+
+          document.getElementById("lastUpdated").textContent =
+            "Last updated: " + new Date().toLocaleTimeString();
+        } catch (e) {
+          document.getElementById("lastUpdated").textContent =
+            "Last updated: error connecting to server";
+          console.error(e);
+        }
+      }
+
+      function renderInvestigations(list) {
+        const container = document.getElementById("investigationsList");
+        document.getElementById("invCount").textContent =
+          list.length + " total";
+        if (!list.length) {
+          container.innerHTML = `<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><p>No investigations yet.<br>Send farm data from the Simulator.</p></div>`;
+          return;
+        }
+        // Sort by date desc
+        const sorted = [...list].sort(
+          (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0),
+        );
+        latestInvestigation = sorted[0];
+        container.innerHTML = sorted
+          .slice(0, 5)
+          .map((inv) => {
+            const sev = (
+              inv.investigation?.severity ||
+              inv.anomalies?.[0]?.severity ||
+              "low"
+            ).toLowerCase();
+            const cls = severityClass(sev);
+            const tag = severityTag(sev);
+            const finding =
+              inv.investigation?.finding ||
+              inv.anomalies?.[0]?.message ||
+              "Unknown issue";
+            const evidence = inv.investigation?.evidence || [];
+            const hist = inv.investigation?.historicalComparison || "";
+            const expl = inv.investigation?.likelyExplanation || "";
+            const needsHuman = inv.investigation?.humanAttentionRecommended;
+            const house = inv.houseId || inv.reading?.houseId || "--";
+            const time = formatDate(inv.createdAt || inv.detectedAt);
+            return `
+                <div class="investigation-item ${cls}">
+                    <div class="inv-finding">
+                        ${finding}
+                        <span class="tag ${tag}">${sev.toUpperCase()}</span>
+                        ${needsHuman ? '<span class="tag tag-severity-high">NEEDS ACTION</span>' : ""}
+                    </div>
+                    <div class="inv-meta">
+                        <span>🏠 ${house}</span>
+                        <span>🕒 ${time}</span>
+                        <span>📊 ${inv.anomalies?.map((a) => a.metric).join(", ") || "general"}</span>
+                    </div>
+                    ${evidence.length ? `<ul class="evidence-list">${evidence.map((e) => `<li>${e}</li>`).join("")}</ul>` : ""}
+                    ${hist ? `<p style="font-size:0.875rem;color:var(--text-light);margin-top:0.5rem"><strong>History:</strong> ${hist}</p>` : ""}
+                    ${expl ? `<p style="font-size:0.875rem;margin-top:0.5rem"><strong>Agent says:</strong> ${expl}</p>` : ""}
+                </div>`;
+          })
+          .join("");
+      }
+
+      function renderReadings(list) {
+        const container = document.getElementById("readingsList");
+        const arr = Array.isArray(list) ? list : [];
+        document.getElementById("readingCount").textContent = arr.length;
+        if (!arr.length) {
+          container.innerHTML = `<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><p>No readings received yet.</p></div>`;
+          return;
+        }
+        const sorted = [...arr].sort(
+          (a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0),
+        );
+        container.innerHTML = sorted
+          .slice(0, 8)
+          .map((r) => {
+            const time = formatTime(r.timestamp);
+            const anom = r._anomaly || r.anomaly;
+            return `
+                <div class="reading-row">
+                    <div>
+                        <div style="font-weight:600">${r.houseId || "Unknown"}</div>
+                        <div class="reading-time">${time} — Temp: ${r.temperatureC ?? "--"}°C · Water: ${r.waterLiters ?? "--"}L · Feed: ${r.feedKg ?? "--"}kg · Eggs: ${r.eggCount ?? "--"}</div>
+                    </div>
+                    <div class="reading-badges">
+                        ${anom ? '<span class="mini-badge" style="background:var(--danger-light);color:var(--danger)">ANOMALY</span>' : '<span class="mini-badge" style="background:var(--primary-light);color:var(--primary)">OK</span>'}
+                    </div>
+                </div>`;
+          })
+          .join("");
+      }
+
+      function updateMetrics(investigations, readings) {
+        // Use latest reading or investigation reading
+        let latest = null;
+        if (readings.length) {
+          latest = [...readings].sort(
+            (a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0),
+          )[0];
+        }
+        if (!latest && investigations.length) {
+          latest = investigations[0].reading;
+        }
+        if (!latest) return;
+
+        const setMetric = (id, value, baseline, unit, label) => {
+          const elVal = document.getElementById(id + "Value");
+          const elBar = document.getElementById(id + "Bar");
+          const elStatus = document.getElementById(id + "Status");
+          if (value == null) return;
+          elVal.textContent = value + unit;
+          const pct = Math.min(100, Math.max(0, (value / baseline) * 100));
+          elBar.style.width = pct + "%";
+
+          // Determine status based on deviation from baseline
+          const dev = Math.abs((value - baseline) / baseline);
+          if (dev > 0.3) {
+            elStatus.textContent = "Critical";
+            elStatus.className = "metric-status status-danger";
+            elBar.className = "metric-bar-fill fill-red";
+          } else if (dev > 0.15) {
+            elStatus.textContent = "Warning";
+            elStatus.className = "metric-status status-warning";
+            elBar.className = "metric-bar-fill fill-amber";
+          } else {
+            elStatus.textContent = "Normal";
+            elStatus.className = "metric-status status-normal";
+            elBar.className = "metric-bar-fill fill-green";
+          }
+        };
+
+        setMetric("temp", latest.temperatureC, 28, "°C");
+        setMetric("water", latest.waterLiters, 81, " L");
+        setMetric("feed", latest.feedKg, 42, " kg");
+        setMetric("egg", latest.eggCount, 410, "");
+
+        // Alert banner
+        const banner = document.getElementById("alertBanner");
+        const latestInv = investigations[0];
+        if (latestInv && latestInv.anomalies?.length) {
+          const a = latestInv.anomalies[0];
+          banner.classList.add("show");
+          document.getElementById("alertTitle").textContent =
+            `${a.metric.charAt(0).toUpperCase() + a.metric.slice(1)} Anomaly Detected`;
+          document.getElementById("alertDesc").textContent =
+            a.message ||
+            `${a.metric} is ${Math.abs(a.deviationPercent).toFixed(1)}% off baseline.`;
+
+          // Show approval panel if human attention recommended
+          const panel = document.getElementById("approvalPanel");
+          if (latestInv.investigation?.humanAttentionRecommended) {
+            panel.classList.add("show");
+            document.getElementById("approvalText").textContent =
+              `House ${latestInv.houseId || "01"}: ${latestInv.investigation.finding || "Issue detected"}. The agent recommends inspection.`;
+          } else {
+            panel.classList.remove("show");
+          }
+        } else {
+          banner.classList.remove("show");
+          document.getElementById("approvalPanel").classList.remove("show");
+        }
+      }
+
+      function approveAction() {
+        alert(
+          "Inspection task created! (Hook this up to createInspectionTask() on your backend)",
+        );
+        document.getElementById("approvalPanel").classList.remove("show");
+      }
+      function dismissAction() {
+        document.getElementById("approvalPanel").classList.remove("show");
+      }
+
+      // Auto refresh every 5 seconds
+      loadData();
+      //   setInterval(loadData, 5000);
+    </script>
+  </body>
+</html>
