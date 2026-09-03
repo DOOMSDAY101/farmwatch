@@ -1,4 +1,4 @@
-import { Agent } from "@strands-agents/sdk";
+import { Agent, StructuredOutputError } from "@strands-agents/sdk";
 import { VercelModel } from "@strands-agents/sdk/models/vercel";
 import { ollama } from "ai-sdk-ollama";
 import { createGetCurrentFarmDataTool } from "./tools/get-current-farm-data";
@@ -11,10 +11,10 @@ import { OpenAIModel } from "@strands-agents/sdk/models/openai";
 
 const model = new OpenAIModel({
     api: "chat",
-    apiKey: process.env.OPENROUTER_API_KEY,
-    modelId: "openrouter/free",
+    apiKey: process.env.GROQ_API_KEY,
+    modelId: "openai/gpt-oss-20b",
     clientConfig: {
-        baseURL: "https://openrouter.ai/api/v1",
+        baseURL: "https://api.groq.com/openai/v1",
     },
 });
 
@@ -145,12 +145,6 @@ by the current and historical data.
 Otherwise:
 "The available data is insufficient to determine the exact cause."
 
-Severity:
-<severity returned by check_for_anomalies>
-
-Human attention recommended:
-<Yes or No, with a short reason>
-
 Keep the response concise.
 `
 
@@ -202,9 +196,10 @@ export async function investigateFarm(
     const agent =
         createFarmWatchAgent(reading);
 
-    const result =
-        await agent.invoke(
-            `
+    try {
+        const result =
+            await agent.invoke(
+                `
 Analyze the current farm conditions.
 
 Use the available tools to investigate
@@ -212,9 +207,34 @@ any detected anomaly. If there is no
 anomaly, report that the farm appears
 normal.
 `
+            );
+        if (!result.structuredOutput) {
+            throw new Error("Agent completed without producing structured output");
+        }
+        return result.structuredOutput as InvestigationAIResult;
+
+    } catch (error) {
+        if (error instanceof StructuredOutputError) {
+            console.error(
+                "FarmWatch structured output failed:",
+                error.message
+            );
+
+            throw new Error(
+                "FarmWatch could not produce a valid investigation result."
+            );
+        }
+
+        console.error(
+            "FarmWatch investigation failed:",
+            error
         );
 
-    return result.structuredOutput as InvestigationAIResult;
+        throw new Error(
+            "Failed to process farm investigation"
+        );
+
+    }
 }
 
 
