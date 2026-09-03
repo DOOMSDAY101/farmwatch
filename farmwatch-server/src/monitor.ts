@@ -7,12 +7,16 @@ import {
     detectAnomalies,
 } from "./tools/detect_anomaly";
 
-const readings: FarmReading[] = [];
+type StoredReading = FarmReading & {
+    anomaly?: boolean;
+};
+
+const readings: StoredReading[] = [];
+
 
 export function processReading(
     reading: FarmReading
 ) {
-    readings.push(reading);
 
     const anomalies =
         detectAnomalies(
@@ -20,10 +24,24 @@ export function processReading(
             baseline
         );
 
+    const hasAnomaly =
+        anomalies.length > 0;
+
+    // Store the reading together with
+    // its deterministic anomaly status.
+    const storedReading: StoredReading = {
+        ...reading,
+        anomaly: hasAnomaly,
+    };
+
+
+    readings.push(storedReading);
+
+
     console.log("\n📊 FarmWatch received:");
     console.log(reading);
 
-    if (anomalies.length === 0) {
+    if (!hasAnomaly) {
         console.log(
             "✅ Farm conditions appear normal."
         );
@@ -50,11 +68,11 @@ export function processReading(
     };
 }
 
-export function getReadings(): FarmReading[] {
+export function getReadings(): StoredReading[] {
     return [...readings];
 }
 
-export function getLatestReading(): FarmReading | null {
+export function getLatestReading(): StoredReading | null {
     return readings.length > 0
         ? readings[readings.length - 1]
         : null;
