@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/DOOMSDAY101/farmwatch#readme",
   "devDependencies": {
+    "@types/cors": "^2.8.19",
     "concurrently": "^10.0.5"
   },
   "dependencies": {
