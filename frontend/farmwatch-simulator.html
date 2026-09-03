@@ -1,0 +1,852 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FarmWatch — Simulator</title>
+    <style>
+      :root {
+        --bg: #f0f4f1;
+        --card: #ffffff;
+        --text: #1f2937;
+        --text-light: #6b7280;
+        --primary: #059669;
+        --primary-light: #d1fae5;
+        --danger: #dc2626;
+        --danger-light: #fee2e2;
+        --warning: #d97706;
+        --warning-light: #fef3c7;
+        --info: #2563eb;
+        --info-light: #dbeafe;
+        --border: #e5e7eb;
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.05);
+        --radius: 14px;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family:
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.5;
+      }
+      header {
+        background: var(--card);
+        border-bottom: 1px solid var(--border);
+        padding: 1rem 2rem;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: var(--shadow);
+      }
+      .header-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-weight: 700;
+        font-size: 1.25rem;
+        color: var(--primary);
+      }
+      .brand svg {
+        width: 28px;
+        height: 28px;
+      }
+      nav {
+        display: flex;
+        gap: 0.25rem;
+      }
+      nav a {
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        text-decoration: none;
+        color: var(--text-light);
+        font-weight: 500;
+        font-size: 0.875rem;
+        transition: all 0.2s;
+      }
+      nav a:hover {
+        background: var(--bg);
+        color: var(--text);
+      }
+      nav a.active {
+        background: var(--primary-light);
+        color: var(--primary);
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+      .server-input {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.8125rem;
+        color: var(--text-light);
+      }
+      .server-input input {
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 0.35rem 0.5rem;
+        font-size: 0.8125rem;
+        width: 180px;
+        font-family: monospace;
+      }
+      .two-col {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 1.5rem;
+      }
+      @media (max-width: 900px) {
+        .two-col {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .card {
+        background: var(--card);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+        overflow: hidden;
+      }
+      .card-header {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .card-title {
+        font-weight: 600;
+        font-size: 1rem;
+      }
+      .card-body {
+        padding: 1.5rem;
+      }
+
+      .section-title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-light);
+        margin-bottom: 1rem;
+      }
+
+      .form-group {
+        margin-bottom: 1.25rem;
+      }
+      .form-group label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: var(--text);
+      }
+      .form-group input[type="text"],
+      .form-group input[type="number"] {
+        width: 100%;
+        padding: 0.625rem 0.875rem;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        font-size: 1rem;
+        font-family: inherit;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+      }
+      .form-group input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+      }
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+      .slider-wrap {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      .slider-wrap input[type="range"] {
+        flex: 1;
+        accent-color: var(--primary);
+      }
+      .slider-value {
+        min-width: 60px;
+        text-align: right;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+        font-size: 0.9375rem;
+      }
+      .baseline-hint {
+        font-size: 0.75rem;
+        color: var(--text-light);
+        margin-top: 0.25rem;
+      }
+
+      .presets {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+      }
+      .preset-btn {
+        padding: 0.5rem 0.875rem;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--card);
+        color: var(--text);
+        font-size: 0.8125rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .preset-btn:hover {
+        background: var(--bg);
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+      .preset-btn.danger:hover {
+        border-color: var(--danger);
+        color: var(--danger);
+        background: var(--danger-light);
+      }
+      .preset-btn.warning:hover {
+        border-color: var(--warning);
+        color: var(--warning);
+        background: var(--warning-light);
+      }
+
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        border: none;
+        background: var(--primary);
+        color: white;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        width: 100%;
+        justify-content: center;
+      }
+      .btn:hover {
+        background: #047857;
+        transform: translateY(-1px);
+      }
+      .btn:active {
+        transform: translateY(0);
+      }
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .response-box {
+        background: #0f172a;
+        color: #e2e8f0;
+        border-radius: 12px;
+        padding: 1.25rem;
+        font-family: "SF Mono", Monaco, monospace;
+        font-size: 0.8125rem;
+        line-height: 1.6;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        word-break: break-word;
+        max-height: 400px;
+        overflow-y: auto;
+      }
+      .response-box .key {
+        color: #7dd3fc;
+      }
+      .response-box .string {
+        color: #86efac;
+      }
+      .response-box .number {
+        color: #fca5a5;
+      }
+      .response-box .boolean {
+        color: #f0abfc;
+      }
+      .response-box .null {
+        color: #94a3b8;
+      }
+
+      .log-entry {
+        padding: 0.875rem 0;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.9375rem;
+        animation: fadeIn 0.3s ease;
+      }
+      .log-entry:last-child {
+        border-bottom: none;
+      }
+      .log-time {
+        font-size: 0.75rem;
+        color: var(--text-light);
+        margin-bottom: 0.25rem;
+      }
+      .log-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 0.2rem 0.5rem;
+        border-radius: 6px;
+        margin-left: 0.5rem;
+      }
+      .log-ok {
+        background: var(--primary-light);
+        color: var(--primary);
+      }
+      .log-anomaly {
+        background: var(--danger-light);
+        color: var(--danger);
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(4px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.25rem 0.625rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+      .tag-anomaly {
+        background: var(--danger-light);
+        color: var(--danger);
+      }
+      .tag-normal {
+        background: var(--primary-light);
+        color: var(--primary);
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 2rem 1rem;
+        color: var(--text-light);
+        font-size: 0.9375rem;
+      }
+    </style>
+    <base target="_blank" />
+  </head>
+  <body>
+    <header>
+      <div class="header-inner">
+        <div class="brand">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            <path d="M9 12l2 2 4-4" />
+          </svg>
+          FarmWatch
+        </div>
+        <nav>
+          <a href="farmwatch-dashboard.html">Dashboard</a>
+          <a href="farmwatch-simulator.html" class="active">Simulator</a>
+        </nav>
+        <div class="server-input">
+          Server:
+          <input
+            type="text"
+            id="serverUrl"
+            value="http://localhost:4000"
+            onchange="updateServer()"
+          />
+        </div>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="two-col">
+        <!-- Simulator Form -->
+        <div>
+          <div class="section-title">Farm Event Simulator</div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Create Reading</span>
+              <span class="tag tag-normal" id="statusBadge">Ready</span>
+            </div>
+            <div class="card-body">
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Farm ID</label>
+                  <input type="text" id="farmId" value="farm-001" />
+                </div>
+                <div class="form-group">
+                  <label>House ID</label>
+                  <input type="text" id="houseId" value="house-01" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Timestamp</label>
+                <input
+                  type="text"
+                  id="timestamp"
+                  readonly
+                  style="background: var(--bg); color: var(--text-light)"
+                />
+              </div>
+
+              <div
+                class="section-title"
+                style="margin-top: 1.5rem; margin-bottom: 0.75rem"
+              >
+                Quick Scenarios
+              </div>
+              <div class="presets">
+                <button class="preset-btn" onclick="setPreset('normal')">
+                  ✅ Normal Day
+                </button>
+
+                <button
+                  class="preset-btn danger"
+                  onclick="setPreset('water_system_issue')"
+                >
+                  💧 Water System Issue
+                </button>
+
+                <button
+                  class="preset-btn danger"
+                  onclick="setPreset('heat_stress')"
+                >
+                  🌡️ Heat Stress
+                </button>
+
+                <button
+                  class="preset-btn warning"
+                  onclick="setPreset('feed_system_issue')"
+                >
+                  🌾 Feed System Issue
+                </button>
+
+                <button
+                  class="preset-btn warning"
+                  onclick="setPreset('production_drop')"
+                >
+                  🥚 Production Drop
+                </button>
+              </div>
+
+              <div class="form-group">
+                <label>Temperature (°C)</label>
+                <div class="slider-wrap">
+                  <input
+                    type="range"
+                    id="tempSlider"
+                    min="15"
+                    max="45"
+                    step="0.1"
+                    value="28"
+                    oninput="syncNumber('temp')"
+                  />
+                  <input
+                    type="number"
+                    id="tempNumber"
+                    value="28"
+                    step="0.1"
+                    style="
+                      width: 80px;
+                      border: 1px solid var(--border);
+                      border-radius: 8px;
+                      padding: 0.4rem 0.6rem;
+                    "
+                    oninput="syncSlider('temp')"
+                  />
+                </div>
+                <div class="baseline-hint">
+                  Baseline: 28°C · Normal range: 24–32°C
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Water (Liters)</label>
+                <div class="slider-wrap">
+                  <input
+                    type="range"
+                    id="waterSlider"
+                    min="0"
+                    max="150"
+                    step="0.5"
+                    value="81"
+                    oninput="syncNumber('water')"
+                  />
+                  <input
+                    type="number"
+                    id="waterNumber"
+                    value="81"
+                    step="0.5"
+                    style="
+                      width: 80px;
+                      border: 1px solid var(--border);
+                      border-radius: 8px;
+                      padding: 0.4rem 0.6rem;
+                    "
+                    oninput="syncSlider('water')"
+                  />
+                </div>
+                <div class="baseline-hint">
+                  Baseline: 81 L · Normal range: 65–100 L
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Feed (kg)</label>
+                <div class="slider-wrap">
+                  <input
+                    type="range"
+                    id="feedSlider"
+                    min="0"
+                    max="80"
+                    step="0.1"
+                    value="42"
+                    oninput="syncNumber('feed')"
+                  />
+                  <input
+                    type="number"
+                    id="feedNumber"
+                    value="42"
+                    step="0.1"
+                    style="
+                      width: 80px;
+                      border: 1px solid var(--border);
+                      border-radius: 8px;
+                      padding: 0.4rem 0.6rem;
+                    "
+                    oninput="syncSlider('feed')"
+                  />
+                </div>
+                <div class="baseline-hint">
+                  Baseline: 42 kg · Normal range: 35–50 kg
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Egg Count</label>
+                <div class="slider-wrap">
+                  <input
+                    type="range"
+                    id="eggSlider"
+                    min="0"
+                    max="600"
+                    step="1"
+                    value="410"
+                    oninput="syncNumber('egg')"
+                  />
+                  <input
+                    type="number"
+                    id="eggNumber"
+                    value="410"
+                    step="1"
+                    style="
+                      width: 80px;
+                      border: 1px solid var(--border);
+                      border-radius: 8px;
+                      padding: 0.4rem 0.6rem;
+                    "
+                    oninput="syncSlider('egg')"
+                  />
+                </div>
+                <div class="baseline-hint">
+                  Baseline: 410 · Normal range: 350–480
+                </div>
+              </div>
+
+              <button class="btn" id="sendBtn" onclick="sendReading()">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <line x1="22" y1="2" x2="11" y2="13"></line>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+                Send to FarmWatch
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Results & Log -->
+        <div>
+          <div class="section-title">Server Response</div>
+          <div class="card" style="margin-bottom: 1.5rem">
+            <div class="card-header">
+              <span class="card-title">Latest Result</span>
+              <span class="tag tag-normal" id="resultBadge">Waiting</span>
+            </div>
+            <div class="card-body">
+              <div id="responseBox" class="response-box">
+                // Click "Send to FarmWatch" to see the agent response here
+              </div>
+            </div>
+          </div>
+
+          <div class="section-title">Event Log</div>
+          <div class="card">
+            <div
+              class="card-header"
+              style="display: flex; justify-content: space-between"
+            >
+              <span class="card-title">Sent Readings</span>
+              <button
+                class="preset-btn"
+                onclick="clearLog()"
+                style="font-size: 0.75rem"
+              >
+                Clear
+              </button>
+            </div>
+            <div class="card-body" id="eventLog">
+              <div class="empty-state">No events sent yet.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let SERVER = localStorage.getItem("fw_server") || "http://localhost:4000";
+      document.getElementById("serverUrl").value = SERVER;
+
+      function updateServer() {
+        SERVER = document.getElementById("serverUrl").value.replace(/\/$/, "");
+        localStorage.setItem("fw_server", SERVER);
+      }
+
+      function syncNumber(type) {
+        document.getElementById(type + "Number").value =
+          document.getElementById(type + "Slider").value;
+      }
+      function syncSlider(type) {
+        document.getElementById(type + "Slider").value =
+          document.getElementById(type + "Number").value;
+      }
+      let currentEvent = "normal";
+
+      function setPreset(name) {
+        currentEvent = name;
+
+        const presets = {
+          normal: {
+            temp: 28,
+            water: 80,
+            feed: 42,
+            eggs: 410,
+          },
+
+          water_system_issue: {
+            temp: 28,
+            water: 42,
+            feed: 42,
+            eggs: 410,
+          },
+
+          feed_system_issue: {
+            temp: 28,
+            water: 80,
+            feed: 21,
+            eggs: 385,
+          },
+
+          production_drop: {
+            temp: 28,
+            water: 80,
+            feed: 42,
+            eggs: 325,
+          },
+
+          heat_stress: {
+            temp: 38,
+            water: 98,
+            feed: 37,
+            eggs: 370,
+          },
+        };
+
+        const preset = presets[name];
+
+        if (!preset) return;
+
+        document.getElementById("tempSlider").value = preset.temp;
+
+        document.getElementById("tempNumber").value = preset.temp;
+
+        document.getElementById("waterSlider").value = preset.water;
+
+        document.getElementById("waterNumber").value = preset.water;
+
+        document.getElementById("feedSlider").value = preset.feed;
+
+        document.getElementById("feedNumber").value = preset.feed;
+
+        document.getElementById("eggSlider").value = preset.eggs;
+
+        document.getElementById("eggNumber").value = preset.eggs;
+      }
+
+      function nowISO() {
+        return new Date().toISOString();
+      }
+      function updateTimestamp() {
+        document.getElementById("timestamp").value = nowISO();
+      }
+      updateTimestamp();
+      setInterval(updateTimestamp, 1000);
+
+      function syntaxHighlight(json) {
+        if (!json) return "";
+        json = json
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+        return json.replace(
+          /("(\u[a-zA-Z0-9]{4}|\[^u]|[^\"])*"(\s*:)?|(true|false|null)|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+          function (match) {
+            let cls = "number";
+            if (/^"/.test(match)) {
+              if (/:$/.test(match)) {
+                cls = "key";
+                match = match.slice(0, -1) + "</span>:";
+              } else cls = "string";
+            } else if (/true|false/.test(match)) cls = "boolean";
+            else if (/null/.test(match)) cls = "null";
+            return '<span class="' + cls + '">' + match + "</span>";
+          },
+        );
+      }
+
+      async function sendReading() {
+        const btn = document.getElementById("sendBtn");
+        btn.disabled = true;
+        btn.innerHTML = "Sending...";
+        document.getElementById("statusBadge").textContent = "Sending...";
+        document.getElementById("statusBadge").className = "tag tag-normal";
+
+        const reading = {
+          farmId: document.getElementById("farmId").value,
+          houseId: document.getElementById("houseId").value,
+          timestamp: document.getElementById("timestamp").value,
+          temperatureC: parseFloat(document.getElementById("tempNumber").value),
+          waterLiters: parseFloat(document.getElementById("waterNumber").value),
+          feedKg: parseFloat(document.getElementById("feedNumber").value),
+          eggCount: parseInt(document.getElementById("eggNumber").value),
+        };
+
+        try {
+          const res = await fetch(`${SERVER}/simulation/event`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              event: currentEvent,
+              reading,
+            }),
+          });
+          const data = await res.json();
+
+          const isAnomaly =
+            data.status === "anomaly" ||
+            (data.anomalies && data.anomalies.length > 0);
+          const badge = document.getElementById("resultBadge");
+          if (isAnomaly) {
+            badge.textContent = "ANOMALY";
+            badge.className = "tag tag-anomaly";
+          } else {
+            badge.textContent = "NORMAL";
+            badge.className = "tag tag-normal";
+          }
+
+          document.getElementById("responseBox").innerHTML = syntaxHighlight(
+            JSON.stringify(data, null, 2),
+          );
+
+          // Add to log
+          addLog(reading, isAnomaly, data.investigationId);
+          document.getElementById("statusBadge").textContent = "Ready";
+          document.getElementById("statusBadge").className = "tag tag-normal";
+        } catch (err) {
+          document.getElementById("responseBox").textContent =
+            "Error: " + err.message;
+          document.getElementById("resultBadge").textContent = "Error";
+          document.getElementById("resultBadge").className = "tag tag-anomaly";
+          document.getElementById("statusBadge").textContent = "Error";
+          document.getElementById("statusBadge").className = "tag tag-anomaly";
+        }
+
+        btn.disabled = false;
+        btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg> Send to FarmWatch`;
+      }
+
+      function addLog(reading, isAnomaly, invId) {
+        const log = document.getElementById("eventLog");
+        const empty = log.querySelector(".empty-state");
+        if (empty) empty.remove();
+
+        const time = new Date().toLocaleTimeString();
+        const div = document.createElement("div");
+        div.className = "log-entry";
+        div.innerHTML = `
+                <div class="log-time">${time} · ${reading.houseId}</div>
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <span>T:${reading.temperatureC}°C · W:${reading.waterLiters}L · F:${reading.feedKg}kg · E:${reading.eggCount}</span>
+                    <span class="log-status ${isAnomaly ? "log-anomaly" : "log-ok"}">${isAnomaly ? "ANOMALY" : "OK"}</span>
+                </div>
+                ${invId ? `<div style="font-size:0.75rem;color:var(--text-light);margin-top:0.25rem">Investigation: ${invId}</div>` : ""}
+            `;
+        log.insertBefore(div, log.firstChild);
+      }
+
+      function clearLog() {
+        document.getElementById("eventLog").innerHTML =
+          '<div class="empty-state">No events sent yet.</div>';
+      }
+    </script>
+  </body>
+</html>
