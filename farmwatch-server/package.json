@@ -23,6 +23,7 @@
   "homepage": "https://github.com/DOOMSDAY101/farmwatch#readme",
   "devDependencies": {
     "@types/node": "^26.4.0",
+    "@types/nodemailer": "^8.0.1",
     "tsx": "^4.23.12",
     "typescript": "^7.0.2"
   },
@@ -33,6 +34,8 @@
     "ai": "^6.0.271",
     "ai-sdk-ollama": "^3.8.8",
     "dotenv": "^17.4.2",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "nodemailer": "^10.0.1",
+    "openai": "^6.49.0"
   }
 }
