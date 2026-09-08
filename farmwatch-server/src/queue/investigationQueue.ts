@@ -1,4 +1,5 @@
 import { investigateFarm } from "../agent";
+import { sendFarmAlertEmail } from "../mail/send_mail";
 import { saveInvestigation } from "../repository/investigationRepository";
 import { Anomaly, FarmReading, InvestigationDocument, InvestigationResult } from "../types/types";
 
@@ -89,6 +90,10 @@ async function processQueue() {
                     humanAttentionRecommended:
                         job.anomalies.length > 0,
                 };
+
+                await sendFarmAlertEmail(
+                    investigation
+                );
 
                 const document: InvestigationDocument = {
                     anomalyId: job.id,
