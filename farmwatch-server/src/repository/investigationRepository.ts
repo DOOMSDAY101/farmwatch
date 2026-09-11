@@ -57,3 +57,20 @@ export async function getInvestigationById(
         anomalyId,
     });
 }
+export async function getInvestigationsByHouse(
+    houseId: string,
+    limit = 10
+) {
+    const db = await getDatabase();
+
+    const collection =
+        db.collection<InvestigationDocument>(
+            COLLECTION_NAME
+        );
+
+    return collection
+        .find({ houseId })
+        .sort({ detectedAt: -1 })
+        .limit(limit)
+        .toArray();
+}
