@@ -6,6 +6,7 @@ import {
     getReadings,
 } from "../monitor";
 import { FarmReading } from "../types/types";
+import { getInvestigations } from "../repository/investigationRepository";
 
 export function createGetHistoricalDataTool(
     currentReading: FarmReading
@@ -22,16 +23,42 @@ export function createGetHistoricalDataTool(
             additionalProperties: false,
         },
 
-        callback: () => {
+        callback: async () => {
 
 
+            const investigations =
+                await getInvestigations
+                    (50);
+
+            // Only use investigations that belong to
+            // the same house as the current reading.
             const historicalReadings =
-                getReadings()
+                investigations
+                    .filter(
+                        (investigation) =>
+                            investigation.houseId ===
+                            currentReading.houseId
+                    )
+                    .map(
+                        (investigation) =>
+                            investigation.reading
+                    )
                     .filter(
                         (reading) =>
                             reading !== currentReading
                     )
-                    .slice(-10);
+                    .slice(0, 10);
+
+            if (
+                historicalReadings.length === 0
+            ) {
+                return JSON.stringify({
+                    sampleSize: 0,
+                    message:
+                        "No historical readings available.",
+                });
+            }
+
 
             if (historicalReadings.length === 0) {
                 return JSON.stringify({
