@@ -2,9 +2,6 @@ import {
     tool,
 } from "@strands-agents/sdk";
 
-import {
-    getLatestReading,
-} from "../monitor";
 import { FarmReading } from "../types/types";
 
 export function createGetCurrentFarmDataTool(
@@ -22,15 +19,6 @@ export function createGetCurrentFarmDataTool(
         },
 
         callback: () => {
-            // const reading =
-            //     getLatestReading();
-
-            // if (!reading) {
-            //     return JSON.stringify({
-            //         error: "No farm readings are available.",
-            //     });
-            // }
-
             return JSON.stringify(reading);
         },
     });

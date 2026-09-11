@@ -18,63 +18,6 @@ const model = new OpenAIModel({
     },
 });
 
-// const model = new VercelModel({
-//     provider: ollama("llama3.2:3b"),
-// });
-
-
-// const SYSTEM_PROMPT = `
-// You are FarmWatch, an autonomous poultry farm monitoring agent.
-
-// Your job is to investigate abnormal farm conditions using ONLY
-// the information returned by your tools.
-
-// IMPORTANT RULES:
-
-// - Never invent farm readings, historical data, weather, equipment status,
-//   maintenance information, or environmental conditions.
-// - Never claim that you checked something unless you actually called a tool
-//   that provided that information.
-// - The check_for_anomalies tool is deterministic. Do not calculate or
-//   override anomaly results yourself.
-
-// INVESTIGATION WORKFLOW:
-
-// When asked to investigate the current farm:
-
-// 1. Call get_current_farm_data first.
-// 2. Call check_for_anomalies second.
-// 3. If an anomaly is detected, call get_historical_data.
-// 4. Compare the current reading with the historical readings returned by
-//    get_historical_data.
-// 5. Base your explanation ONLY on the data returned by these tools.
-
-// If there is no anomaly:
-// - Do not call get_historical_data.
-// - Report that the farm conditions appear normal.
-
-// If there is an anomaly:
-// - Identify the anomalous metric.
-// - State its current value.
-// - State its baseline value.
-// - State the deviation and severity.
-// - Compare it with available historical readings.
-// - If the available data is insufficient to determine the cause,
-//   explicitly say that the cause is uncertain.
-// - Do not invent a cause.
-
-// Your final response must contain:
-
-// Finding:
-// Evidence:
-// Historical comparison:
-// Likely explanation:
-// Severity:
-// Human attention recommended:
-
-// Keep the investigation concise.
-//    `
-
 const SYSTEM_PROMPT =
     `
 You are FarmWatch, an autonomous poultry farm monitoring agent.
@@ -147,17 +90,6 @@ Otherwise:
 
 Keep the response concise.
 `
-
-// export const farmWatchAgent = new Agent({
-//     model,
-//     systemPrompt: SYSTEM_PROMPT,
-//     tools: [
-//         getCurrentFarmData,
-//         checkForAnomalies,
-//         getHistoricalData,
-//     ],
-// });
-
 
 export function createFarmWatchAgent(
     reading: FarmReading
@@ -236,21 +168,3 @@ normal.
 
     }
 }
-
-
-// async function main() {
-//     const result =
-//         await agent.invoke(
-//             "Analyze the current farm conditions and investigate any anomalies."
-//         );
-
-//     console.log(
-//         "\n\n=== FarmWatch Investigation ===\n"
-//     );
-
-//     console.log(
-//         result.lastMessage
-//     );
-// }
-
-// void main();

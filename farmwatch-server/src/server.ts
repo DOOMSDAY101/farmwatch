@@ -73,11 +73,6 @@ app.post(
 
             investigationId,
         });
-
-        // res.status(200).json({
-        //     received: true,
-        //     ...result,
-        // });
     }
 );
 
