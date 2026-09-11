@@ -2,7 +2,7 @@
 
 **Autonomous AI monitoring for poultry farms using Strands Agents**
 
-**TRACK**: Professional Agentsa
+**TRACK**: Professional Agents
 
 FarmWatch is an AI-powered background monitoring agent for poultry farms.
 
