@@ -653,7 +653,9 @@
     </div>
 
     <script>
-      let SERVER = localStorage.getItem("fw_server") || "http://localhost:4000";
+      let SERVER =
+        localStorage.getItem("fw_server") ||
+        "https://farm-simulator-p7gv.onrender.com";
       document.getElementById("serverUrl").value = SERVER;
 
       function updateServer() {
