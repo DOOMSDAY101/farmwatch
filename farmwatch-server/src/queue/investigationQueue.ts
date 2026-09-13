@@ -91,9 +91,6 @@ async function processQueue() {
                         job.anomalies.length > 0,
                 };
 
-                await sendFarmAlertEmail(
-                    investigation
-                );
 
                 const document: InvestigationDocument = {
                     anomalyId: job.id,
@@ -116,6 +113,15 @@ async function processQueue() {
                 await saveInvestigation(
                     document
                 );
+
+                try {
+                    await sendFarmAlertEmail(investigation);
+                } catch (error) {
+                    console.error(
+                        "⚠️ Farm alert email failed, continuing execution:",
+                        error
+                    );
+                }
 
                 console.log(
                     `💾 Investigation saved: ${job.id}`

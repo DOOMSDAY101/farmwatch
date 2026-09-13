@@ -1,16 +1,12 @@
 import nodemailer from "nodemailer";
 import { InvestigationResult } from "../types/types";
+import { Resend } from "resend";
 
 require("dotenv").config();
 
-const transporter =
-    nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-            user: process.env.GMAIL_USER,
-            pass: process.env.GMAIL_APP_PASSWORD,
-        },
-    });
+const resend = new Resend(
+    process.env.RESEND_API_KEY
+);
 
 export async function sendFarmAlertEmail(
     investigation: InvestigationResult
@@ -24,11 +20,11 @@ export async function sendFarmAlertEmail(
         );
     }
 
-    const result =
-        await transporter.sendMail({
-            from: `"FarmWatch" <${process.env.GMAIL_USER}>`,
+    const { data, error } =
+        await resend.emails.send({
+            from: "FarmWatch <onboarding@resend.dev>",
 
-            to: farmerEmail,
+            to: [farmerEmail],
 
             subject:
                 `🚨 FarmWatch Alert - ${investigation.severity} anomaly`,
@@ -62,8 +58,8 @@ Please investigate the farm conditions.
 
     console.log(
         "📧 FarmWatch email sent:",
-        result.messageId
+        data?.id
     );
 
-    return result;
+    return data;
 }
