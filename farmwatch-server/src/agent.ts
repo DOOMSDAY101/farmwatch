@@ -1,10 +1,8 @@
 import { Agent, StructuredOutputError } from "@strands-agents/sdk";
-import { VercelModel } from "@strands-agents/sdk/models/vercel";
-import { ollama } from "ai-sdk-ollama";
 import { createGetCurrentFarmDataTool } from "./tools/get-current-farm-data";
 import { createCheckForAnomaliesTool } from "./tools/check_for_anomalies";
 import { createGetHistoricalDataTool } from "./tools/get-historical-data";
-import { FarmReading, InvestigationResult } from "./types/types";
+import { FarmReading } from "./types/types";
 import { InvestigationAIResult, investigationSchema } from "./schemas/agent_findings";
 
 import { OpenAIModel } from "@strands-agents/sdk/models/openai";
