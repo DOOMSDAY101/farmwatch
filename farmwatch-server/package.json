@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx src/server.ts",
     "agent": "tsx src/agent.ts",
+    "start": "tsx src/server.ts",
     "build": "tsc"
   },
   "repository": {
@@ -22,6 +23,7 @@
   },
   "homepage": "https://github.com/DOOMSDAY101/farmwatch#readme",
   "devDependencies": {
+    "@types/cors": "^2.8.19",
     "@types/node": "^26.4.0",
     "@types/nodemailer": "^8.0.1",
     "tsx": "^4.23.12",
@@ -34,8 +36,10 @@
     "@types/express": "^5.0.6",
     "ai": "^6.0.271",
     "ai-sdk-ollama": "^3.8.8",
+    "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "mongodb": "^7.6.0",
     "nodemailer": "^10.0.1",
     "openai": "^6.49.0"
   }
