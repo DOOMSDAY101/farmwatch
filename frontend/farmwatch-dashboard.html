@@ -785,7 +785,9 @@
     </div>
 
     <script>
-      let SERVER = localStorage.getItem("fw_server") || "http://localhost:3000";
+      let SERVER =
+        localStorage.getItem("fw_server") ||
+        "https://farmwatch-server.onrender.com";
       document.getElementById("serverUrl").value = SERVER;
       let latestInvestigation = null;
 
@@ -1025,7 +1027,7 @@
 
       // Auto refresh every 5 seconds
       loadData();
-      //   setInterval(loadData, 5000);
+      setInterval(loadData, 5000);
     </script>
   </body>
 </html>
