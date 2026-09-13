@@ -59,15 +59,6 @@ export function createGetHistoricalDataTool(
                 });
             }
 
-
-            if (historicalReadings.length === 0) {
-                return JSON.stringify({
-                    sampleSize: 0,
-                    message:
-                        "No historical readings available.",
-                });
-            }
-
             const average = (
                 values: number[]
             ) =>
